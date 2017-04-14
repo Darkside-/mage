@@ -25,64 +25,43 @@
  *  authors and should not be interpreted as representing official policies, either expressed
  *  or implied, of BetaSteward_at_googlemail.com.
  */
-package mage.cards.l;
+package mage.cards.s;
 
 import java.util.UUID;
-import mage.MageInt;
-import mage.abilities.Ability;
-import mage.abilities.common.SimpleActivatedAbility;
-import mage.abilities.common.SimpleStaticAbility;
-import mage.abilities.costs.common.TapSourceCost;
+import mage.abilities.common.CycleTriggeredAbility;
 import mage.abilities.costs.mana.ManaCostsImpl;
-import mage.abilities.effects.common.continuous.BoostControlledEffect;
-import mage.abilities.effects.common.continuous.GainAbilityAllEffect;
-import mage.abilities.keyword.MenaceAbility;
+import mage.abilities.effects.common.CreateTokenEffect;
+import mage.abilities.keyword.CyclingAbility;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
-import mage.constants.Duration;
-import mage.constants.Zone;
-import mage.filter.common.FilterCreaturePermanent;
-import mage.filter.predicate.mageobject.SubtypePredicate;
+import mage.game.permanent.token.ZombieToken;
 
 /**
  *
- * @author jonubuu
+ * @author fireshoes
  */
-public class LordOfTheAccursed extends CardImpl {
+public class StirTheSands extends CardImpl {
 
-    private static final FilterCreaturePermanent filter = new FilterCreaturePermanent("Merfolk creatures");
+    public StirTheSands(UUID ownerId, CardSetInfo setInfo) {
+        super(ownerId, setInfo, new CardType[]{CardType.SORCERY}, "{4}{B}{B}");
 
-    static {
-        filter.add(new SubtypePredicate("Zombie"));
+        // Create three 2/2 black Zombie creature tokens.
+        getSpellAbility().addEffect(new CreateTokenEffect(new ZombieToken(), 3));
+
+        // Cycling {3}{B}
+        this.addAbility(new CyclingAbility(new ManaCostsImpl("{3}{B}")));
+
+        // When you cycle Stir the Sands, create a 2/2 black Zombie creature token.
+        this.addAbility(new CycleTriggeredAbility(new CreateTokenEffect(new ZombieToken())));
     }
 
-    public LordOfTheAccursed(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId,setInfo,new CardType[]{CardType.CREATURE},"{2}{B}");
-        this.subtype.add("Zombie");
-
-        this.power = new MageInt(2);
-        this.toughness = new MageInt(3);
-
-        // Other Zombie creatures get +1/+1.
-        this.addAbility(new SimpleStaticAbility(Zone.BATTLEFIELD, new BoostControlledEffect(1, 1, Duration.WhileOnBattlefield, filter, true)));
-    
-        //{2}{B}, Tap: All Zombies gain menace until end of turn.
-        Ability ability = new SimpleActivatedAbility(Zone.BATTLEFIELD, new GainAbilityAllEffect(
-                new MenaceAbility(),
-                Duration.WhileOnBattlefield,
-                filter, "Each Zombie you control has menace."),
-                new ManaCostsImpl("{2}{B}"));
-        ability.addCost(new TapSourceCost());
-        this.addAbility(ability);
-    }
-
-    public LordOfTheAccursed(final LordOfTheAccursed card) {
+    public StirTheSands(final StirTheSands card) {
         super(card);
     }
 
     @Override
-    public LordOfTheAccursed copy() {
-        return new LordOfTheAccursed(this);
+    public StirTheSands copy() {
+        return new StirTheSands(this);
     }
 }
